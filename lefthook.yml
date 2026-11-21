@@ -1,0 +1,4 @@
+pre-commit:
+  commands:
+    check-plugin:
+      run: scripts/check-plugin.sh

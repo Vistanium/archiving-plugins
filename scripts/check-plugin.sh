@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Fast checks only; the evals are run by hand (see README).
+# Fast checks run before each commit by lefthook; the evals are run by hand (see README).
 set -uo pipefail
 cd "$(git rev-parse --show-toplevel)"
 fail=0
