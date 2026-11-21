@@ -73,6 +73,17 @@ In Claude on the web or desktop, or in ChatGPT, add `https://mcp.archivi.ng/mcp`
 | `mcp_config.json`                         | The archive connection for Antigravity                   |
 | `gemini-extension.json`                   | The extension and its archive connection, for Gemini CLI |
 | `evals/`                                  | Test cases for the skills                                |
+| `.githooks/pre-commit`                    | Checks run before each commit                            |
+
+## Making changes
+
+Turn on the pre-commit check once per clone:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+It checks that every JSON file parses, that the plugin and server names match across the files for each assistant, and runs the Claude Code, Antigravity and Gemini CLI validators when they're installed.
 
 ## Checking the skills
 
