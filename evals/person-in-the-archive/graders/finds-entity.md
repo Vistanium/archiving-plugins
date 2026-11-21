@@ -1,4 +1,4 @@
 ---
 type: tool_used
-tool: mcp__plugin_archivi-ng_archivi-ng__archive_entity
+tool: mcp__plugin_archivi-ng_archive__archive_entity
 ---

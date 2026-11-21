@@ -1,5 +1,5 @@
 {
   "mcpServers": {
-    "archivi-ng": { "type": "http", "url": "https://mcp.archivi.ng/mcp" }
+    "archive": { "type": "http", "url": "https://mcp.archivi.ng/mcp" }
   }
 }

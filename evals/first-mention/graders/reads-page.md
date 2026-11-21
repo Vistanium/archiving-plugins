@@ -1,4 +1,4 @@
 ---
 type: tool_used
-tool: mcp__plugin_archivi-ng_archivi-ng__archive_read_page
+tool: mcp__plugin_archivi-ng_archive__archive_read_page
 ---

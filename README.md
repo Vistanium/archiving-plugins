@@ -11,6 +11,8 @@ Search and read [Archivi.ng](https://archivi.ng)'s Nigerian and African newspape
 
 You need an Archivi.ng membership. Every plan includes a daily allowance, free plan included. The first time your assistant uses the archive, your browser opens Archivi.ng: sign in and choose **Allow**.
 
+You can also [connect without a plugin](#connect-without-a-plugin).
+
 ## Claude Code
 
 ```bash
@@ -20,6 +22,8 @@ claude plugin marketplace add Vistanium/archiving-plugins
 ```bash
 claude plugin install archivi-ng@vistanium
 ```
+
+Open Claude Code and run `/mcp`. Select the Archivi.ng plugin’s connection and choose **Authenticate**. In your browser, sign in to Archivi.ng and choose **Allow**.
 
 ## Codex
 
@@ -34,7 +38,7 @@ codex plugin add archivi-ng@vistanium
 Then sign in, and restart any open Codex sessions:
 
 ```bash
-codex mcp login archivi-ng
+codex mcp login archive
 ```
 
 ## Antigravity
@@ -57,9 +61,50 @@ To update later:
 gemini extensions update archivi-ng
 ```
 
-## Other assistants
+## Connect without a plugin
 
-In Claude on the web or desktop, or in ChatGPT, add `https://mcp.archivi.ng/mcp` as a custom connector. The skills in `skills/` are plain `SKILL.md` files you can add to any assistant that supports skills.
+Connect directly to search and read the archive. The four research skills are available separately in [`skills/`](skills/) for assistants that support `SKILL.md` files.
+
+When prompted, sign in to Archivi.ng in your browser and choose **Allow**.
+
+### Claude Code
+
+```bash
+claude mcp add --scope user --transport http archivi-ng https://mcp.archivi.ng/mcp
+```
+
+In Claude Code, run `/mcp`, select `archivi-ng`, and choose **Authenticate**.
+
+### Codex
+
+```bash
+codex mcp add archivi-ng --url https://mcp.archivi.ng/mcp
+```
+
+If you still need to sign in, run `codex mcp login archivi-ng`. Start a fresh Codex session after signing in.
+
+### Antigravity CLI
+
+```bash
+agy mcp add --type http archivi-ng https://mcp.archivi.ng/mcp
+```
+
+In Antigravity CLI, run `/mcp` and follow the sign-in prompt for `archivi-ng`.
+
+### Gemini CLI
+
+```bash
+gemini mcp add --scope user --transport http archivi-ng https://mcp.archivi.ng/mcp
+```
+
+In Gemini CLI, run `/mcp auth archivi-ng`.
+
+### ChatGPT, Claude, and other assistants
+
+Name the connection **Archivi.ng** and enter `https://mcp.archivi.ng/mcp` as the server URL. If your assistant asks for a transport or authentication method, choose **Streamable HTTP** and **OAuth**.
+
+- **ChatGPT on the web**. Create a custom MCP app if your workspace supports it. [ChatGPT setup guide](https://help.openai.com/en/articles/12584461-developer-mode-and-full-mcp-apps-in-chatgpt-beta)
+- **Claude on the web or desktop**. Add a custom connector under **Customize → Connectors**. [Claude setup guide](https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp)
 
 ## What's in this repository
 
