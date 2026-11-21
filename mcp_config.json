@@ -1,5 +1,5 @@
 {
   "mcpServers": {
-    "archivi": { "serverUrl": "https://mcp.archivi.ng/mcp" }
+    "archivi-ng": { "serverUrl": "https://mcp.archivi.ng/mcp" }
   }
 }

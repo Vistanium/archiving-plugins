@@ -34,7 +34,7 @@ codex plugin add archivi-ng@vistanium
 Then sign in, and restart any open Codex sessions:
 
 ```bash
-codex mcp login archivi
+codex mcp login archivi-ng
 ```
 
 ## Antigravity
