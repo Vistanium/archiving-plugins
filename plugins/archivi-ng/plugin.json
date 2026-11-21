@@ -1,0 +1,20 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "archivi-ng",
+  "version": "0.1.0",
+  "description": "Search and read Archivi.ng's newspapers and magazines from your assistant, with research methods for checking quotes, first mentions, trends and people.",
+  "homepage": "https://archivi.ng",
+  "keywords": [
+    "archive",
+    "newspapers",
+    "nigeria",
+    "africa",
+    "history",
+    "research"
+  ],
+  "author": {
+    "name": "Archivi.ng",
+    "url": "https://archivi.ng"
+  },
+  "license": "MIT"
+}

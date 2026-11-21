@@ -1,0 +1,20 @@
+{
+  "name": "archivi-ng",
+  "interface": {
+    "displayName": "Archivi.ng"
+  },
+  "plugins": [
+    {
+      "name": "archivi-ng",
+      "source": {
+        "source": "local",
+        "path": "./plugins/archivi-ng"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Research"
+    }
+  ]
+}

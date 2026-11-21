@@ -1,0 +1,15 @@
+{
+  "name": "archivi-ng",
+  "owner": {
+    "name": "Archivi.ng",
+    "url": "https://archivi.ng"
+  },
+  "plugins": [
+    {
+      "name": "archivi-ng",
+      "source": "./plugins/archivi-ng",
+      "description": "Search and read Archivi.ng's newspapers and magazines from your assistant, with research methods for checking quotes, first mentions, trends and people."
+    }
+  ],
+  "description": "Archivi.ng's archive of Nigerian and African newspapers and magazines, for AI assistants."
+}
