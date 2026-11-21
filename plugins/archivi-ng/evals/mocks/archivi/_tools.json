@@ -1,0 +1,1219 @@
+{
+  "tools": [
+    {
+      "annotations": {
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Count pages by year"
+      },
+      "description": "Count pages matching a query or tagged with an entity, over a range of at most 60 years: by year (default) or by publication. Each row has the pages held, so per_1000 compares fairly. Every word of a query must appear on a counted page.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "entity_id": {
+            "description": "Count pages tagged with this person, event, place or organisation, from archive_entity.",
+            "type": "integer"
+          },
+          "from_year": {
+            "description": "First year, for example 1960.",
+            "type": "integer"
+          },
+          "group_by": {
+            "description": "year (default) or publication: one row per publication with matches over the whole range.",
+            "type": "string"
+          },
+          "publication": {
+            "description": "Optional publication slug.",
+            "type": "string"
+          },
+          "query": {
+            "description": "Words or a quoted phrase to count, as in archive_search. Optional when entity_id is given.",
+            "type": "string"
+          },
+          "to_year": {
+            "description": "Last year, at most 60 years after from_year.",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "from_year",
+          "to_year"
+        ],
+        "type": "object"
+      },
+      "name": "archive_count",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "entity_id": {
+            "type": "integer"
+          },
+          "note": {
+            "type": "string"
+          },
+          "publications": {
+            "description": "With group_by publication: publications with at least one match, most matches first.",
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "matches": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "pages_held": {
+                  "description": "Pages held for this publication within the queried years only, not its lifetime total (that is in archive_coverage).",
+                  "type": "integer"
+                },
+                "per_1000": {
+                  "description": "Matches per 1,000 pages held; null when nothing is held.",
+                  "type": [
+                    "null",
+                    "number"
+                  ]
+                },
+                "publication": {
+                  "type": "string"
+                },
+                "small_base": {
+                  "description": "1 to 499 pages held, so per_1000 rests on few pages. With none held, per_1000 is null instead.",
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "publication",
+                "name",
+                "matches",
+                "pages_held",
+                "per_1000",
+                "small_base"
+              ],
+              "type": "object"
+            },
+            "type": [
+              "null",
+              "array"
+            ]
+          },
+          "query": {
+            "type": "string"
+          },
+          "total_matches": {
+            "type": "integer"
+          },
+          "years": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "matches": {
+                  "type": "integer"
+                },
+                "pages_held": {
+                  "description": "Pages held for that year (and publication, if given).",
+                  "type": "integer"
+                },
+                "per_1000": {
+                  "description": "Matches per 1,000 pages held; null when nothing is held, which is a gap in the archive, not a year without mentions.",
+                  "type": [
+                    "null",
+                    "number"
+                  ]
+                },
+                "small_base": {
+                  "description": "1 to 499 pages held, so per_1000 rests on few pages. With none held, per_1000 is null instead.",
+                  "type": "boolean"
+                },
+                "year": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "year",
+                "matches",
+                "pages_held",
+                "per_1000",
+                "small_base"
+              ],
+              "type": "object"
+            },
+            "type": [
+              "null",
+              "array"
+            ]
+          }
+        },
+        "required": [
+          "total_matches",
+          "note"
+        ],
+        "type": "object"
+      },
+      "title": "Count pages by year"
+    },
+    {
+      "annotations": {
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "What the archive holds"
+      },
+      "description": "Without publication: every publication in the archive with its slug, issues and pages held, and first and last issue, in one call. With a publication slug: issues held per year and the longest stretches with none held; add from and to to list every issue held in a window, so an absence can be told apart from a gap in holdings.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "from": {
+            "description": "With publication: list the issues held from this date (YYYY, YYYY-MM or YYYY-MM-DD).",
+            "type": "string"
+          },
+          "publication": {
+            "description": "A publication slug for its holdings in detail. Leave empty for every publication at once.",
+            "type": "string"
+          },
+          "to": {
+            "description": "With publication: list the issues held up to this date (YYYY, YYYY-MM or YYYY-MM-DD).",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "name": "archive_coverage",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "gaps": {
+            "description": "Stretches with no issues held, much longer than the publication's usual interval: the archive doesn't hold those issues, which says nothing about whether they were printed. Longest 30, in date order.",
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "after": {
+                  "description": "Last issue held before the gap.",
+                  "type": "string"
+                },
+                "before": {
+                  "description": "First issue held after the gap.",
+                  "type": "string"
+                },
+                "days": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "after",
+                "before",
+                "days"
+              ],
+              "type": "object"
+            },
+            "type": [
+              "null",
+              "array"
+            ]
+          },
+          "help_url": {
+            "description": "Present when no issue is held in the window: where the reader can ask the Archivi.ng team.",
+            "type": "string"
+          },
+          "issues_held": {
+            "description": "With from or to: the dates of every issue held in that window (at most 400). An empty list means none is held, not that none was printed.",
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "null",
+              "array"
+            ]
+          },
+          "note": {
+            "type": "string"
+          },
+          "publication": {
+            "additionalProperties": false,
+            "properties": {
+              "first_issue": {
+                "type": "string"
+              },
+              "issues": {
+                "type": "integer"
+              },
+              "last_issue": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "pages": {
+                "type": "integer"
+              },
+              "slug": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "slug",
+              "issues",
+              "pages"
+            ],
+            "type": [
+              "null",
+              "object"
+            ]
+          },
+          "publications": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "first_issue": {
+                  "type": "string"
+                },
+                "issues": {
+                  "type": "integer"
+                },
+                "last_issue": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "pages": {
+                  "type": "integer"
+                },
+                "slug": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "slug",
+                "issues",
+                "pages"
+              ],
+              "type": "object"
+            },
+            "type": [
+              "null",
+              "array"
+            ]
+          },
+          "total_pages": {
+            "type": "integer"
+          },
+          "typical_days_between_issues": {
+            "type": "integer"
+          },
+          "years": {
+            "description": "Issues held per year, including years inside the span with none.",
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "issues": {
+                  "type": "integer"
+                },
+                "year": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "year",
+                "issues"
+              ],
+              "type": "object"
+            },
+            "type": [
+              "null",
+              "array"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "title": "What the archive holds"
+    },
+    {
+      "annotations": {
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Find a person, event, place or organisation"
+      },
+      "description": "Find the people, events, places and organisations the archive has identified across its pages, by name. Returns each match's entity_id, name, type, a short description and how many pages are tagged with it. Use entity_id with archive_search or archive_count to work from the tags instead of spellings.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "description": "A name to look up, for example Abacha or Murtala Muhammed.",
+            "type": "string"
+          },
+          "type": {
+            "description": "Optional: person, event, place or organisation.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "name": "archive_entity",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "matches": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "description": {
+                  "type": "string"
+                },
+                "entity_id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "pages": {
+                  "description": "Pages tagged with this entity in the archive.",
+                  "type": "integer"
+                },
+                "type": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "entity_id",
+                "name",
+                "type",
+                "pages"
+              ],
+              "type": "object"
+            },
+            "type": [
+              "null",
+              "array"
+            ]
+          },
+          "note": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "matches"
+        ],
+        "type": "object"
+      },
+      "title": "Find a person, event, place or organisation"
+    },
+    {
+      "annotations": {
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Get an issue"
+      },
+      "description": "List the pages of one issue (edition) in order, by issue_id from a search result or page. Returns the publication, date, page count, whether any pages in the sequence aren't held, and each page's page_id and link, with machine-written summaries if include_summaries is set.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "include_summaries": {
+            "description": "Add each page's machine-written summary.",
+            "type": "boolean"
+          },
+          "issue_id": {
+            "description": "The issue_id from a search result or page.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "issue_id"
+        ],
+        "type": "object"
+      },
+      "name": "archive_get_issue",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "citation": {
+            "type": "string"
+          },
+          "complete": {
+            "description": "False when positions in the issue's page sequence aren't held.",
+            "type": "boolean"
+          },
+          "date": {
+            "type": "string"
+          },
+          "issue_id": {
+            "type": "string"
+          },
+          "missing_positions": {
+            "description": "Positions in the page sequence the archive doesn't hold: usually pages that weren't scanned, occasionally a numbering quirk.",
+            "items": {
+              "type": "integer"
+            },
+            "type": [
+              "null",
+              "array"
+            ]
+          },
+          "page_count": {
+            "type": "integer"
+          },
+          "pages": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "label": {
+                  "type": "string"
+                },
+                "machine_summary": {
+                  "type": "string"
+                },
+                "page_id": {
+                  "type": "string"
+                },
+                "position": {
+                  "type": "integer"
+                },
+                "url": {
+                  "description": "Short link to the page; it redirects to the full address.",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "position",
+                "page_id",
+                "url"
+              ],
+              "type": "object"
+            },
+            "type": [
+              "null",
+              "array"
+            ]
+          },
+          "publication": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "issue_id",
+          "citation",
+          "publication",
+          "date",
+          "page_count",
+          "complete",
+          "pages"
+        ],
+        "type": "object"
+      },
+      "title": "Get an issue"
+    },
+    {
+      "annotations": {
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Get a page"
+      },
+      "description": "Get the details of one page by page_id: citation, machine-written summary, keywords, topics, issue_id, and links to the page, its scan and thumbnail. Does not include the page text; use archive_read_page for that.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "page_id": {
+            "description": "The page_id from a search result.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "page_id"
+        ],
+        "type": "object"
+      },
+      "name": "archive_get_page",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "citation": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          },
+          "image_url": {
+            "type": "string"
+          },
+          "issue_id": {
+            "type": "string"
+          },
+          "keywords": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "null",
+              "array"
+            ]
+          },
+          "machine_summary": {
+            "type": "string"
+          },
+          "page": {
+            "type": "string"
+          },
+          "page_id": {
+            "type": "string"
+          },
+          "publication": {
+            "type": "string"
+          },
+          "publication_slug": {
+            "type": "string"
+          },
+          "thumbnail_url": {
+            "type": "string"
+          },
+          "topics": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "null",
+              "array"
+            ]
+          },
+          "url": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "page_id",
+          "citation",
+          "publication",
+          "publication_slug",
+          "date",
+          "page",
+          "machine_summary",
+          "url"
+        ],
+        "type": "object"
+      },
+      "title": "Get a page"
+    },
+    {
+      "annotations": {
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Read a page's text"
+      },
+      "description": "Read the OCR text of one page. With phrase, returns up to three passages around it, the positions of the matched words on the scan, and a view_url that opens the page zoomed to that spot. With scope full, returns the whole text in parts.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "page_id": {
+            "description": "The page_id from a search result.",
+            "type": "string"
+          },
+          "part": {
+            "description": "For scope full: which part to return, starting at 1.",
+            "type": "integer"
+          },
+          "phrase": {
+            "description": "Words to find on the page. Returns the passages around them and where they are on the scan.",
+            "type": "string"
+          },
+          "region": {
+            "description": "x, y, width, height in pixels of the page's display image, as word boxes give them. Returns the words printed inside that area.",
+            "items": {
+              "type": "integer"
+            },
+            "type": [
+              "null",
+              "array"
+            ]
+          },
+          "scope": {
+            "description": "passage (default when phrase is given) or full (the whole text, in parts).",
+            "type": "string"
+          }
+        },
+        "required": [
+          "page_id"
+        ],
+        "type": "object"
+      },
+      "name": "archive_read_page",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "citation": {
+            "type": "string"
+          },
+          "image_height": {
+            "type": "integer"
+          },
+          "image_width": {
+            "type": "integer"
+          },
+          "note": {
+            "type": "string"
+          },
+          "page_id": {
+            "type": "string"
+          },
+          "part": {
+            "type": "integer"
+          },
+          "parts": {
+            "type": "integer"
+          },
+          "passages": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "highlights": {
+                  "items": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "box": {
+                        "description": "x, y, width, height in pixels of the page's display image.",
+                        "items": {
+                          "type": "integer"
+                        },
+                        "maxItems": 4,
+                        "minItems": 4,
+                        "type": "array"
+                      },
+                      "text": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "text",
+                      "box"
+                    ],
+                    "type": "object"
+                  },
+                  "type": [
+                    "null",
+                    "array"
+                  ]
+                },
+                "text": {
+                  "type": "string"
+                },
+                "view_url": {
+                  "description": "Opens the page on Archivi.ng zoomed to this passage.",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "text"
+              ],
+              "type": "object"
+            },
+            "type": [
+              "null",
+              "array"
+            ]
+          },
+          "scope": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "view_url": {
+            "description": "With region: opens the page on Archivi.ng zoomed to that area.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "page_id",
+          "citation",
+          "url",
+          "scope",
+          "note"
+        ],
+        "type": "object"
+      },
+      "title": "Read a page's text"
+    },
+    {
+      "annotations": {
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Search the archive"
+      },
+      "description": "Search the archive's pages by words or exact phrases, with optional date range, publication and sort. Returns the total number of matching pages, how the query was read, a next_cursor for more results, and for each page its citation, a machine-written summary, the matching words and a link.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "cursor": {
+            "description": "next_cursor from a previous archive_search with the same query and filters, to get the next results. There is no depth limit.",
+            "type": "string"
+          },
+          "detail": {
+            "description": "full (default) or brief: brief keeps the citation, date, link and match_type and leaves out summaries and matching words, for scanning many results cheaply.",
+            "type": "string"
+          },
+          "entity_id": {
+            "description": "Only pages tagged with this person, event, place or organisation, from archive_entity.",
+            "type": "integer"
+          },
+          "from": {
+            "description": "Earliest publication date: YYYY, YYYY-MM or YYYY-MM-DD.",
+            "type": "string"
+          },
+          "keyword": {
+            "description": "Only pages whose machine-made keywords match this, for example a name. Keywords aren't normalised; entity_id is more reliable for people.",
+            "type": "string"
+          },
+          "limit": {
+            "description": "Results per page, 1 to 20, or up to 100 with detail brief (for collecting many pages). Default 10.",
+            "type": [
+              "null",
+              "integer"
+            ]
+          },
+          "publication": {
+            "description": "Publication slug from archive_coverage, for example african-concord.",
+            "type": "string"
+          },
+          "query": {
+            "description": "Words to search for. Put a phrase in double quotes to match it exactly, for example \"jollof rice\". Leave empty to browse by date or publication.",
+            "type": "string"
+          },
+          "sort": {
+            "description": "relevance (the default with words), oldest (the default with no words) or newest. Oldest and newest require every word to appear.",
+            "type": "string"
+          },
+          "to": {
+            "description": "Latest publication date: YYYY, YYYY-MM or YYYY-MM-DD.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "name": "archive_search",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "help_url": {
+            "description": "Present when the archive holds little or nothing for the filters: where the reader can ask the Archivi.ng team.",
+            "type": "string"
+          },
+          "hint": {
+            "type": "string"
+          },
+          "next_cursor": {
+            "description": "Pass as cursor to get the next results; absent on the last.",
+            "type": "string"
+          },
+          "query_as_read": {
+            "additionalProperties": false,
+            "properties": {
+              "dates": {
+                "type": "string"
+              },
+              "entity_id": {
+                "type": "integer"
+              },
+              "keyword": {
+                "type": "string"
+              },
+              "matching": {
+                "type": "string"
+              },
+              "not_supported": {
+                "description": "Operators in the query that were searched as ordinary words because search doesn't support them yet.",
+                "items": {
+                  "type": "string"
+                },
+                "type": [
+                  "null",
+                  "array"
+                ]
+              },
+              "pages_held": {
+                "description": "With both from and to: pages the archive holds in those dates (and publication), whatever the query. A small number means the results are a small sample of what was printed.",
+                "type": [
+                  "null",
+                  "integer"
+                ]
+              },
+              "phrases": {
+                "items": {
+                  "type": "string"
+                },
+                "type": [
+                  "null",
+                  "array"
+                ]
+              },
+              "publication": {
+                "type": "string"
+              },
+              "sort": {
+                "type": "string"
+              },
+              "words": {
+                "items": {
+                  "type": "string"
+                },
+                "type": [
+                  "null",
+                  "array"
+                ]
+              }
+            },
+            "required": [
+              "sort",
+              "matching"
+            ],
+            "type": "object"
+          },
+          "results": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "citation": {
+                  "description": "Publication, date and page, ready to cite.",
+                  "type": "string"
+                },
+                "date": {
+                  "type": "string"
+                },
+                "date_precision": {
+                  "description": "Present only when the date isn't exact: month or year, when only the issue's month or year is known.",
+                  "type": "string"
+                },
+                "issue_id": {
+                  "type": "string"
+                },
+                "machine_summary": {
+                  "type": "string"
+                },
+                "match": {
+                  "description": "The matching words on the page, with matches in \u00ab\u00bb.",
+                  "type": "string"
+                },
+                "match_type": {
+                  "description": "literal_ocr: the words are in the page text; summary_match: in the summary; related: similar in meaning, the words may not appear.",
+                  "type": "string"
+                },
+                "page_id": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "page_id",
+                "citation",
+                "date",
+                "url"
+              ],
+              "type": "object"
+            },
+            "type": [
+              "null",
+              "array"
+            ]
+          },
+          "total": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "total",
+          "query_as_read",
+          "results"
+        ],
+        "type": "object"
+      },
+      "title": "Search the archive"
+    },
+    {
+      "annotations": {
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Search the site's stories"
+      },
+      "description": "Search the stories the Archivi.ng team has written from the archive (articles on people, events and periods), by words. Returns each story's title, a short summary, its date and a link on Archivi.ng. Stories are the team's own articles, not pages of the archive; cite them by title and url.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "limit": {
+            "description": "Stories to return, 1 to 10. Default 5.",
+            "type": "integer"
+          },
+          "query": {
+            "description": "Words to find in the stories, for example a person, place or event.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "type": "object"
+      },
+      "name": "archive_stories",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "note": {
+            "type": "string"
+          },
+          "stories": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "citation": {
+                  "description": "Title, Archivi.ng and date, ready to cite.",
+                  "type": "string"
+                },
+                "date": {
+                  "type": "string"
+                },
+                "summary": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "url": {
+                  "description": "Short link to the story on Archivi.ng; it redirects to the full address.",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "title",
+                "citation",
+                "url"
+              ],
+              "type": "object"
+            },
+            "type": [
+              "null",
+              "array"
+            ]
+          },
+          "total": {
+            "description": "Stories that match, of which the first limit are listed.",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "total",
+          "stories"
+        ],
+        "type": "object"
+      },
+      "title": "Search the site's stories"
+    },
+    {
+      "annotations": {
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Usage today"
+      },
+      "description": "How much of today's archive allowance this account has used: units used and allowed, when they reset, calls left this minute, and what each kind of call costs. Calls to this tool are free.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "type": "object"
+      },
+      "name": "archive_usage",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "calls_last_minute": {
+            "type": "integer"
+          },
+          "calls_left_now": {
+            "description": "Calls that can be made before the minute limit is reached.",
+            "type": "integer"
+          },
+          "calls_per_minute": {
+            "description": "Calls allowed in any minute.",
+            "type": "integer"
+          },
+          "costs": {
+            "additionalProperties": false,
+            "description": "Units each kind of call costs. Calls that return an error cost nothing.",
+            "properties": {
+              "archive_count": {
+                "type": "integer"
+              },
+              "archive_get_page": {
+                "description": "Also archive_show_page.",
+                "type": "integer"
+              },
+              "archive_read_page_full": {
+                "type": "integer"
+              },
+              "archive_read_page_passage": {
+                "description": "Passages around a phrase, or the words in a region.",
+                "type": "integer"
+              },
+              "archive_search": {
+                "description": "Per page of results of the full-detail size or part of one: a brief search of 100 results costs five pages.",
+                "type": "integer"
+              },
+              "archive_view_page": {
+                "type": "integer"
+              },
+              "other_tools": {
+                "description": "archive_coverage, archive_entity, archive_get_issue and archive_stories.",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "archive_search",
+              "archive_get_page",
+              "archive_read_page_passage",
+              "archive_read_page_full",
+              "archive_view_page",
+              "archive_count",
+              "other_tools"
+            ],
+            "type": "object"
+          },
+          "daily_units": {
+            "description": "Units allowed each day.",
+            "type": "integer"
+          },
+          "resets_at": {
+            "description": "When today's units reset (midnight West Africa Time), in UTC.",
+            "type": "string"
+          },
+          "units_left": {
+            "type": "integer"
+          },
+          "units_used": {
+            "description": "Units used today.",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "units_used",
+          "daily_units",
+          "units_left",
+          "resets_at",
+          "calls_last_minute",
+          "calls_per_minute",
+          "calls_left_now",
+          "costs"
+        ],
+        "type": "object"
+      },
+      "title": "Usage today"
+    },
+    {
+      "annotations": {
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "View a page's scan"
+      },
+      "description": "See the printed page as an image. With phrase, the scan is cropped around the first place those words are printed, with the text around them, to check a headline, quote, name or figure against the print rather than the OCR text. With region (x, y, width, height in pixels of the page's display image, as archive_read_page gives word boxes), it is cropped to that area. With neither, the whole page, reduced. Also returns the citation, the area shown and a view_url that opens that area on Archivi.ng.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "page_id": {
+            "description": "The page_id from a search result.",
+            "type": "string"
+          },
+          "phrase": {
+            "description": "Words printed on the page. The image is cropped around the first place they appear.",
+            "type": "string"
+          },
+          "region": {
+            "description": "x, y, width, height in pixels of the page's display image. The image is cropped to this area.",
+            "items": {
+              "type": "integer"
+            },
+            "type": [
+              "null",
+              "array"
+            ]
+          }
+        },
+        "required": [
+          "page_id"
+        ],
+        "type": "object"
+      },
+      "name": "archive_view_page",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "citation": {
+            "type": "string"
+          },
+          "crop": {
+            "description": "x, y, width, height in pixels of the page's display image: the area the image shows.",
+            "items": {
+              "type": "integer"
+            },
+            "maxItems": 4,
+            "minItems": 4,
+            "type": "array"
+          },
+          "image_height": {
+            "description": "Height in pixels of the page's display image.",
+            "type": "integer"
+          },
+          "image_width": {
+            "description": "Width in pixels of the page's display image.",
+            "type": "integer"
+          },
+          "note": {
+            "type": "string"
+          },
+          "page_id": {
+            "type": "string"
+          },
+          "shown": {
+            "description": "Width and height in pixels of the image returned, after any reduction.",
+            "items": {
+              "type": "integer"
+            },
+            "maxItems": 2,
+            "minItems": 2,
+            "type": "array"
+          },
+          "url": {
+            "type": "string"
+          },
+          "view_url": {
+            "description": "Opens the page on Archivi.ng zoomed to the area shown.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "page_id",
+          "citation",
+          "url",
+          "view_url",
+          "crop",
+          "image_width",
+          "image_height",
+          "shown",
+          "note"
+        ],
+        "type": "object"
+      },
+      "title": "View a page's scan"
+    }
+  ]
+}

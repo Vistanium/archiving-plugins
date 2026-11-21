@@ -1,6 +1,6 @@
 # Archivi.ng for AI assistants
 
-Search and read [Archivi.ng](https://archivi.ng)'s Nigerian and African newspapers and magazines from Claude Code or Codex. The plugin connects your assistant to the archive and adds four research methods, which appear as `archivi-ng:<skill>`:
+Search and read [Archivi.ng](https://archivi.ng)'s Nigerian and African newspapers and magazines from Claude Code, Codex or Antigravity. The plugin connects your assistant to the archive and adds four research methods, which appear as `archivi-ng:<skill>`:
 
 | Skill                   | For                                                                     |
 | ----------------------- | ----------------------------------------------------------------------- |
@@ -14,21 +14,21 @@ You need an Archivi.ng membership. Every plan includes a daily allowance, free p
 ## Claude Code
 
 ```bash
-claude plugin marketplace add Vistanium/archivi-plugins
+claude plugin marketplace add Vistanium/archiving-plugins
 ```
 
 ```bash
-claude plugin install archivi-ng@archivi-ng
+claude plugin install archivi-ng@vistanium
 ```
 
 ## Codex
 
 ```bash
-codex plugin marketplace add Vistanium/archivi-plugins
+codex plugin marketplace add Vistanium/archiving-plugins
 ```
 
 ```bash
-codex plugin add archivi-ng@archivi-ng
+codex plugin add archivi-ng@vistanium
 ```
 
 Then sign in, and restart any open Codex sessions:
@@ -37,6 +37,24 @@ Then sign in, and restart any open Codex sessions:
 codex mcp login archivi
 ```
 
+## Antigravity
+
+Clone this repository, then install the plugin from its folder:
+
+```bash
+agy plugin install ./plugins/archivi-ng
+```
+
 ## Other assistants
 
 In Claude on the web or desktop, or in ChatGPT, add `https://mcp.archivi.ng/mcp` as a custom connector. The skills in `plugins/archivi-ng/skills/` are plain `SKILL.md` files you can add to any assistant that supports skills.
+
+## Checking the skills
+
+`plugins/archivi-ng/evals/` holds one case per skill, each a real question with a stand-in archive that answers from what the live archive returned. Graders check that the skill fired, that the key steps ran (an oldest-first search, a page read, a holdings check) and, with a model judge, that the answer is right. A run uses no archive allowance:
+
+```bash
+claude plugin eval plugins/archivi-ng --ablation none --runs 3 -j 4
+```
+
+Every run is a Claude Code session on your own Claude sign-in, and the stand-in archive and the judge are Claude too, so a run counts against your Claude plan's usage, or bills your API key if Claude Code uses one. The report prices a full run at about $3.

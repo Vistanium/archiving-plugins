@@ -16,5 +16,6 @@
     "name": "Archivi.ng",
     "url": "https://archivi.ng"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "logo": "assets/icon.png"
 }
