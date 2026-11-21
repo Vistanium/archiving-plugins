@@ -7,7 +7,7 @@
   "plugins": [
     {
       "name": "archivi-ng",
-      "source": "./plugins/archivi-ng",
+      "source": "./",
       "description": "Search and read Archivi.ng's newspapers and magazines from your assistant, with research methods for checking quotes, first mentions, trends and people."
     }
   ],

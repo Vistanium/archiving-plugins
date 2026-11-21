@@ -1,0 +1,10 @@
+{
+  "name": "archivi-ng",
+  "version": "0.1.0",
+  "description": "Search and read Archivi.ng's newspapers and magazines from your assistant, with research methods for checking quotes, first mentions, trends and people.",
+  "mcpServers": {
+    "archivi": {
+      "httpUrl": "https://mcp.archivi.ng/mcp"
+    }
+  }
+}

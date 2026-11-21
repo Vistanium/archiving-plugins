@@ -8,7 +8,7 @@
       "name": "archivi-ng",
       "source": {
         "source": "local",
-        "path": "./plugins/archivi-ng"
+        "path": "./"
       },
       "policy": {
         "installation": "AVAILABLE",
