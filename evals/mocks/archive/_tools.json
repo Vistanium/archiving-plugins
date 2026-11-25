@@ -412,7 +412,7 @@
         "readOnlyHint": true,
         "title": "Get an issue"
       },
-      "description": "List the pages of one issue (edition) in order, by issue_id from a search result or page. Returns the publication, date, page count, whether any pages in the sequence aren't held, and each page's page_id and link, with machine-written summaries if include_summaries is set.",
+      "description": "List the pages of one issue (edition) in order, by issue_id from a search result or page. Returns the publication, date, page count, whether any pages in the sequence aren't held, each page's page_id and link, the issue's own link on Archivi.ng and its front cover, with machine-written summaries if include_summaries is set.",
       "inputSchema": {
         "additionalProperties": false,
         "properties": {
@@ -441,10 +441,22 @@
             "description": "False when positions in the issue's page sequence aren't held.",
             "type": "boolean"
           },
+          "cover_page_url": {
+            "description": "Link to the front cover. Absent when page 1 isn't held.",
+            "type": "string"
+          },
+          "cover_thumbnail_url": {
+            "description": "Small image of the scanned front cover. Absent when page 1 isn't held.",
+            "type": "string"
+          },
           "date": {
             "type": "string"
           },
           "issue_id": {
+            "type": "string"
+          },
+          "issue_url": {
+            "description": "The issue on Archivi.ng, opened at its first page: the link to give a reader for the whole issue.",
             "type": "string"
           },
           "missing_positions": {
@@ -901,7 +913,7 @@
                   "type": "string"
                 },
                 "match": {
-                  "description": "The matching words on the page, with matches in \u00ab\u00bb.",
+                  "description": "The matching words on the page, with matches in «».",
                   "type": "string"
                 },
                 "match_type": {
