@@ -103,8 +103,10 @@ In Gemini CLI, run `/mcp auth archivi-ng`.
 
 Name the connection **Archivi.ng** and enter `https://mcp.archivi.ng/mcp` as the server URL. If your assistant asks for a transport or authentication method, choose **Streamable HTTP** and **OAuth**.
 
+The [assistant guide on Archivi.ng](https://archivi.ng/help/assistants) has step-by-step setup with screenshots, example questions and troubleshooting.
+
 - **ChatGPT on the web**. Create a custom MCP app if your workspace supports it. [ChatGPT setup guide](https://help.openai.com/en/articles/12584461-developer-mode-and-full-mcp-apps-in-chatgpt-beta)
-- **Claude on the web or desktop**. Add a custom connector under **Customize → Connectors**. [Claude setup guide](https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp)
+- **Claude on the web or desktop**. Add a custom connector from **Plugins** (or **Customize → Connectors**). [Claude setup guide](https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp)
 
 ## What's in this repository
 
